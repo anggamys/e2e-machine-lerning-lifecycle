@@ -1,5 +1,10 @@
 mlruns/
+test_dir/
+my_local_model/
 twitter-dataset*/
 
 mlflow.db
 token.txt
+test_*.py
+
+*.txt

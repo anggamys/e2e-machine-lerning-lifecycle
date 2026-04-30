@@ -1,3 +1,5 @@
+import os
+import shutil
 import mlflow
 import dagshub
 import warnings
@@ -68,8 +70,12 @@ with mlflow.start_run(nested=False):
 
     mlflow.log_text(str(report), "classification_report.txt")
 
-    # Ensure model is logged at top-level artifact directory for MLflow Docker build
-    mlflow_sklearn.log_model(best_model, name="model")
+    # Workaround for DagsHub MLflow artifact upload issue
+    if os.path.exists("best_model_local"):
+        shutil.rmtree("best_model_local")
+
+    mlflow_sklearn.save_model(best_model, "best_model_local")
+    mlflow.log_artifacts("best_model_local", "model")
 
     # Save run_id for GitHub Actions to use
     with open("run_id.txt", "w") as f:
