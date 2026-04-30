@@ -66,4 +66,4 @@ with mlflow.start_run(nested=False):
     mlflow.log_text(str(report), "classification_report.txt")
 
     # Ensure model is logged at top-level artifact directory for MLflow Docker build
-    mlflow_sklearn.log_model(best_model, artifact_path="model")
+    mlflow_sklearn.log_model(best_model, name="model")

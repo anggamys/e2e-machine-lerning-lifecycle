@@ -36,4 +36,9 @@ jobs:
 
       - name: Build Docker image with MLflow
         run: |
-          mlflow models build-docker -m mlruns/1/*/artifacts/model -n ${{ github.repository }}:latest || echo "Skip if model not found"
+          MODEL_PATH=$(find mlruns -name MLmodel | head -n 1 | xargs dirname)
+          if [ -n "$MODEL_PATH" ]; then
+            mlflow models build-docker -m "$MODEL_PATH" -n ${{ github.repository }}:latest
+          else
+            echo "Skip if model not found"
+          fi
