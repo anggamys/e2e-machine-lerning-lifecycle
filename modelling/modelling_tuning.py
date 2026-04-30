@@ -8,9 +8,6 @@ from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import accuracy_score, classification_report
 
-mlflow.set_tracking_uri("http://127.0.0.1:5000")
-mlflow.set_experiment("pijak-dicoding")
-
 data = pd.read_csv("./twitter-dataset-cleaned/data_clean.csv")
 data = data.dropna(subset=["cleaned_text"])
 

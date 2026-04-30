@@ -1,20 +1,11 @@
-import warnings
-import os
 import mlflow
+import warnings
 import pandas as pd
 from mlflow import sklearn as mlflow_sklearn
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import accuracy_score, classification_report
-
-# ENV switch for MLflow tracking URI
-if os.getenv("CI") == "true":
-    mlflow.set_tracking_uri("file:./mlruns")
-else:
-    mlflow.set_tracking_uri("http://127.0.0.1:5000")
-mlflow.set_experiment("pijak-dicoding")
-
 
 data = pd.read_csv("./twitter-dataset-cleaned/data_clean.csv")
 data = data.dropna(subset=["cleaned_text"])

@@ -2,4 +2,4 @@ name: pijak-dicoding
 
 entry_points:
   main:
-    command: 'python modelling/modelling.py'
+    command: 'python modelling/modelling_tuning.py'
