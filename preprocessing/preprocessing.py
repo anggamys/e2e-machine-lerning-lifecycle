@@ -63,6 +63,13 @@ def main():
     data_load["cleaned_text"] = data_load["Tweet"].apply(clean_text)
     data_load["cleaned_text"] = data_load["cleaned_text"].apply(stopword.remove)
 
+    na = data_load["cleaned_text"].isna().sum()
+    print(f"Jumlah baris dengan cleaned_text NaN: {na}")
+
+    if na > 0:
+        print("Terdapat baris dengan cleaned_text NaN. Menghapus baris tersebut.")
+        data_load = data_load.dropna(subset=["cleaned_text"])
+
     output_clean_dir = "./twitter-dataset-cleaned"
     os.makedirs(output_clean_dir, exist_ok=True)
 
