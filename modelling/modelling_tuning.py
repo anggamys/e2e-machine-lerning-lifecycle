@@ -1,17 +1,22 @@
 import os
 import shutil
-import mlflow
-import dagshub
 import warnings
+import dagshub
+import mlflow
 import pandas as pd
-from mlflow import sklearn as mlflow_sklearn
-from sklearn.exceptions import DataConversionWarning
-from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics import accuracy_score, classification_report
 
-dagshub.init(repo_owner='anggamys', repo_name='e2e-machine-lerning-lifecycle', mlflow=True)
+from mlflow import sklearn as mlflow_sklearn
+
+from sklearn.exceptions import DataConversionWarning
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.pipeline import Pipeline
+
+dagshub.init(
+    repo_owner="anggamys", repo_name="e2e-machine-lerning-lifecycle", mlflow=True
+)
 
 data = pd.read_csv("./twitter-dataset-cleaned/data_clean.csv")
 data = data.dropna(subset=["cleaned_text"])
@@ -37,27 +42,29 @@ warnings.filterwarnings(
 # Suppress DataConversionWarning from sklearn
 warnings.filterwarnings("ignore", category=DataConversionWarning)
 
-vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1, 2))
-X_train_vec = vectorizer.fit_transform(X_train)
-X_test_vec = vectorizer.transform(X_test)
+
+pipeline = Pipeline(
+    [
+        ("tfidf", TfidfVectorizer(max_features=5000, ngram_range=(1, 2))),
+        ("clf", LogisticRegression()),
+    ]
+)
 
 param_grid = {
-    "C": [0.01, 0.1, 1, 10, 100],
-    "solver": ["lbfgs"],
-    "class_weight": ["balanced", None],
-    "max_iter": [500, 1000],
+    "clf__C": [0.01, 0.1, 1, 10, 100],
+    "clf__solver": ["lbfgs"],
+    "clf__class_weight": ["balanced", None],
+    "clf__max_iter": [500, 1000],
 }
 
 with mlflow.start_run(nested=False):
     mlflow_sklearn.autolog()
 
-    grid = GridSearchCV(
-        LogisticRegression(), param_grid, cv=3, scoring="accuracy", n_jobs=-1
-    )
-    grid.fit(X_train_vec, y_train)
+    grid = GridSearchCV(pipeline, param_grid, cv=3, scoring="accuracy", n_jobs=-1)
+    grid.fit(X_train, y_train)
 
     best_model = grid.best_estimator_
-    y_pred = best_model.predict(X_test_vec)
+    y_pred = best_model.predict(X_test)
     acc = accuracy_score(y_test, y_pred)
 
     mlflow.log_metric("accuracy_manual", float(acc))

@@ -44,7 +44,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and Push Docker image to GHCR
+      - name: Build and Push API Docker image to GHCR
         env:
           MLFLOW_TRACKING_URI: https://dagshub.com/anggamys/e2e-machine-lerning-lifecycle.mlflow
           MLFLOW_TRACKING_USERNAME: ${{ secrets.DAGSHUB_USERNAME }}
@@ -56,8 +56,11 @@ jobs:
             # Memastikan nama image formatnya lowercase (syarat utama docker/GHCR)
             IMAGE_NAME=$(echo "ghcr.io/${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
             
-            # Build image
-            mlflow models build-docker -m "runs:/$RUN_ID/model" -n $IMAGE_NAME:latest
+            # Download model dari DagsHub
+            mlflow artifacts download -r $RUN_ID -a model -d downloaded_model
+            
+            # Build custom API Docker image
+            docker build -t $IMAGE_NAME:latest .
             
             # Push image ke GHCR
             docker push $IMAGE_NAME:latest
