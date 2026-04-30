@@ -48,3 +48,4 @@ with mlflow.start_run():
     print("Classification Report:\n", report)
 
     mlflow.log_text(str(report), "classification_report.txt")
+    mlflow_sklearn.log_model(model, "model")

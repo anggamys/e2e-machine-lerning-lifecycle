@@ -64,3 +64,6 @@ with mlflow.start_run():
     print("Classification Report:\n", report)
 
     mlflow.log_text(str(report), "classification_report.txt")
+
+    # Log the trained model for MLflow Docker build
+    mlflow_sklearn.log_model(best_model, "model")
