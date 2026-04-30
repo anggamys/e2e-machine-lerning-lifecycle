@@ -26,11 +26,11 @@ jobs:
 
       - name: Run MLflow Project
         run: |
-          mlflow run .
+          mlflow run . --env-manager=local
 
       - name: Run modelling
         run: |
-          python modelling/modelling.py
+          python modelling/modelling_tuning.py
 
       - name: Upload mlruns artifact
         uses: actions/upload-artifact@v4
