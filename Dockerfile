@@ -2,10 +2,9 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install dependencies
-COPY requirements.txt .
-# Add FastAPI and Uvicorn for the API
-RUN pip install --no-cache-dir -r requirements.txt fastapi uvicorn pydantic
+# Install minimal dependencies for API
+COPY requirements-api.txt .
+RUN pip install --no-cache-dir -r requirements-api.txt
 
 # Copy the inference code
 COPY inference/inference.py /app/inference.py

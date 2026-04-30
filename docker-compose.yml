@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  sentiment-api:
+    image: ghcr.io/anggamys/e2e-machine-lerning-lifecycle:latest
+    container_name: ml_sentiment_api
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    environment:
+      # Anda bisa menambahkan environment variables tambahan di sini jika diperlukan
+      - TZ=Asia/Jakarta
