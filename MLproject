@@ -1,7 +1,8 @@
+environment:
 name: pijak-dicoding
 
 environment:
-  conda: MLProject/conda.yaml
+  requirements_file: requirements.txt
 
 entry_points:
   main:
