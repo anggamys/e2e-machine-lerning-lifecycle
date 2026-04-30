@@ -43,7 +43,7 @@ param_grid = {
     "max_iter": [500, 1000],
 }
 
-with mlflow.start_run():
+with mlflow.start_run(nested=False):
     mlflow_sklearn.autolog()
 
     grid = GridSearchCV(
@@ -65,5 +65,5 @@ with mlflow.start_run():
 
     mlflow.log_text(str(report), "classification_report.txt")
 
-    # Log the trained model for MLflow Docker build
-    mlflow_sklearn.log_model(best_model, "model")
+    # Ensure model is logged at top-level artifact directory for MLflow Docker build
+    mlflow_sklearn.log_model(best_model, artifact_path="model")
