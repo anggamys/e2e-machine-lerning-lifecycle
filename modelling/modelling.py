@@ -1,4 +1,5 @@
 import warnings
+import os
 import mlflow
 import pandas as pd
 from mlflow import sklearn as mlflow_sklearn
@@ -7,7 +8,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import accuracy_score, classification_report
 
-mlflow.set_tracking_uri("http://127.0.0.1:5000")
+# ENV switch for MLflow tracking URI
+if os.getenv("CI") == "true":
+    mlflow.set_tracking_uri("file:./mlruns")
+else:
+    mlflow.set_tracking_uri("http://127.0.0.1:5000")
 mlflow.set_experiment("pijak-dicoding")
 
 

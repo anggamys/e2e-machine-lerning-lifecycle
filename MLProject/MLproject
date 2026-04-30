@@ -1,0 +1,8 @@
+name: pijak-dicoding
+
+environment:
+  conda: MLProject/conda.yaml
+
+entry_points:
+  main:
+    command: 'python modelling/modelling.py'
