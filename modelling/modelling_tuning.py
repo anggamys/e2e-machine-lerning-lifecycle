@@ -1,5 +1,6 @@
-import warnings
 import mlflow
+import dagshub
+import warnings
 import pandas as pd
 from mlflow import sklearn as mlflow_sklearn
 from sklearn.exceptions import DataConversionWarning
@@ -7,6 +8,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import accuracy_score, classification_report
+
+dagshub.init(repo_owner='anggamys', repo_name='e2e-machine-lerning-lifecycle', mlflow=True)
 
 data = pd.read_csv("./twitter-dataset-cleaned/data_clean.csv")
 data = data.dropna(subset=["cleaned_text"])
@@ -67,3 +70,7 @@ with mlflow.start_run(nested=False):
 
     # Ensure model is logged at top-level artifact directory for MLflow Docker build
     mlflow_sklearn.log_model(best_model, name="model")
+
+    # Save run_id for GitHub Actions to use
+    with open("run_id.txt", "w") as f:
+        f.write(mlflow.active_run().info.run_id)
