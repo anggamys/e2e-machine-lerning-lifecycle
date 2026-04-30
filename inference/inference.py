@@ -1,9 +1,21 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from prometheus_fastapi_instrumentator import Instrumentator
+from prometheus_client import Counter
 import cloudpickle
 import os
 
 app = FastAPI(title="Sentiment Analysis API")
+
+# Initialize Prometheus Instrumentator
+Instrumentator().instrument(app).expose(app)
+
+# Custom Prometheus Metrics
+PREDICTION_COUNTER = Counter(
+    "sentiment_predictions_total",
+    "Total number of sentiment predictions made",
+    ["sentiment"],
+)
 
 # Load model
 MODEL_PATH = os.environ.get("MODEL_PATH", "downloaded_model/model")
@@ -34,7 +46,12 @@ def predict(request: PredictRequest):
     try:
         # Model is a pipeline with TfidfVectorizer and LogisticRegression
         prediction = model.predict([request.text])
-        return PredictResponse(sentiment=int(prediction[0]))
+        sentiment_result = int(prediction[0])
+
+        # Increment Prometheus counter
+        PREDICTION_COUNTER.labels(sentiment=str(sentiment_result)).inc()
+
+        return PredictResponse(sentiment=sentiment_result)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
