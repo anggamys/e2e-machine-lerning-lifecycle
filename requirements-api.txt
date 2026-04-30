@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pydantic
+scikit-learn
+pandas
+cloudpickle
+Sastrawi
+prometheus-fastapi-instrumentator
+prometheus-client

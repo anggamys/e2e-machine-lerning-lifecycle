@@ -8,3 +8,5 @@ token.txt
 test_*.py
 
 *.txt
+
+!requirements-api.txt
